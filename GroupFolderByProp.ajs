@@ -1,0 +1,49 @@
+var debug = true;
+
+// Show output in the console
+console.show();
+console.clear();
+
+var gr_prop = window.prompt("Бy which property the group is?", 'serviceGroup');
+if (!gr_prop) {
+	exit();
+}
+selection.filter("folder").each(function(folder) {
+  console.log('Starting grouping of "', folder.name, '"');
+  grouping(folder,gr_prop);
+});
+console.log('Export terminated.');
+function getPropartis(){
+    var existProps="";
+    selection.filter("folder").children().each(function(v) {
+
+        v.prop.each(function(p){
+            existProps+=p+",";
+        })
+    });
+    return "("+existProps+")";
+}
+// Generic functions
+function grouping(folder,groupProp) {
+    var subFolders = $(folder).children("folder");
+    console.log(subFolders);
+    $(folder).children().not(subFolders).each(function(v) {
+        console.log(v.name+" "+v.prop(groupProp));
+        var f=v.prop(groupProp)
+        if (f!=null){
+           var trgFolder=null;//$(folder).children('folder["'+f+'"]').first();
+           console.log(">>"+f+" "+trgFolder);
+           $(folder).children("folder").each(function(element) {
+            console.log(">>"+element+" ");
+            if (element.name==f) trgFolder=element
+           });
+           console.log(">>>"+trgFolder+" ");
+           if (trgFolder==null){
+            trgFolder= folder.createFolder(f);
+            trgFolder.add(v); 
+           } else{
+            trgFolder.add(v); 
+           }
+        }
+      });
+}
